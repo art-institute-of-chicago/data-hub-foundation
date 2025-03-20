@@ -32,6 +32,10 @@ class ApiModelBuilderSearch extends ApiModelBuilder
                 $columns
             );
         }
+        else {
+            $columns = ['*'];
+        }
+
         $results = $this->forPage($page, $perPage)->get($columns);
 
         $paginationData = $results->getMetadata('pagination');
