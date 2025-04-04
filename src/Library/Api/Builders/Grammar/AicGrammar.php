@@ -87,7 +87,7 @@ class AicGrammar
     protected function compileColumns($query, $columns)
     {
         // By default, the API returns all columns if none are specified.
-        return $columns === ['*'] ? [] : ['fields' => join(',', $columns)];
+        return $columns === ['*'] || $columns == null ? ['fields' => true] : ['fields' => join(',', $columns)];
     }
 
     /**
