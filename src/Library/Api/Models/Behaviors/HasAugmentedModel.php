@@ -44,6 +44,11 @@ trait HasAugmentedModel
         return $this->augmented;
     }
 
+    public function getIsAugmentedAttribute()
+    {
+        return $this->augmented;
+    }
+
     /**
      * Bypass missed methods to the augmented model if existent
      *
