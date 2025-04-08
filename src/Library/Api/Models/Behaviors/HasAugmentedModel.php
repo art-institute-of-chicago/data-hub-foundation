@@ -46,7 +46,7 @@ trait HasAugmentedModel
 
     public function getIsAugmentedAttribute()
     {
-        return $this->augmented;
+        return isset($this->augmentedModel);
     }
 
     /**
