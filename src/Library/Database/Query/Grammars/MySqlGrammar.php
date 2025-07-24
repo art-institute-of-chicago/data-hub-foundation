@@ -38,7 +38,7 @@ class MySqlGrammar extends Grammar
 
         $parameters = implode(', ', $parameters);
 
-        return "replace into ${table} (${columns}) values ${parameters}";
+        return "replace into {$table} ({$columns}) values {$parameters}";
     }
 
     /**
@@ -72,7 +72,7 @@ class MySqlGrammar extends Grammar
 
         $parameters = implode(', ', $parameters);
 
-        return "insert ignore into ${table} (${columns}) values ${parameters}";
+        return "insert ignore into {$table} ({$columns}) values {$parameters}";
     }
 
     /**
@@ -102,6 +102,6 @@ class MySqlGrammar extends Grammar
             return $this->wrap($columnName) . ' = VALUES(' . $this->wrap($columnName) . ')';
         }, $columnNames));
 
-        return "INSERT INTO ${table} (${columns}) VALUES ${parameters} ON DUPLICATE KEY UPDATE ${updates}";
+        return "INSERT INTO {$table} ({$columns}) VALUES {$parameters} ON DUPLICATE KEY UPDATE {$updates}";
     }
 }
