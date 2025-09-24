@@ -20,6 +20,7 @@ use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute as EloquentAttribute;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -954,8 +955,29 @@ abstract class BaseApiModel implements ArrayAccess, Arrayable, Jsonable, JsonSer
     {
         $value = $this->getAttribute($key);
 
-        if ($value === null && method_exists($this, 'getAugmentedModel') && $this->getAugmentedModel()) {
-            return $this->getAugmentedModel()->{$key};
+        if ($value === null && method_exists($this, 'getAugmentedModel') && $augmented =$this->getAugmentedModel()) {
+            $value = $augmented->getAttribute($key);
+
+            $oldAccessor = 'get' . Str::studly($key) . 'Attribute';
+            $camelAccessor = Str::camel($key);
+
+            if ($value === null && method_exists($augmented, $oldAccessor)) {
+                $value = $augmented->{$oldAccessor}();
+            }
+
+            if ($value === null && method_exists($augmented, $camelAccessor)) {
+                $attribute = $augmented->{$camelAccessor}();
+
+                if ($attribute instanceof EloquentAttribute) {
+                    if (method_exists($attribute, 'get')) {
+                        $value = $attribute->get(null, method_exists($augmented, 'getAttributes') ? $augmented->getAttributes() : []);
+                    }
+
+                    if (isset($attribute->get) && is_callable($attribute->get)) {
+                        $value = ($attribute->get)(null, method_exists($augmented, 'getAttributes') ? $augmented->getAttributes() : []);
+                    }
+                }
+            }
         }
 
         return $value;
