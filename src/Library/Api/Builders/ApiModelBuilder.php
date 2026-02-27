@@ -361,7 +361,27 @@ class ApiModelBuilder extends Builder
      */
     public function getModels($columns = ['*'])
     {
-        $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
+        $results = new ApiCollection();
+        if (count($this->query->ids) > 50) {
+            $ids = collect($this->query->ids);
+            $count = 0;
+            foreach ($ids->chunk(50) as $chunk) {
+                $this->query->ids = $chunk->all();
+                if ($count == 0) {
+                    $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
+                }
+                else {
+                    $resultsChunk = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
+                    foreach ($resultsChunk as $r) {
+                        $results = $results->push($r);
+                    }
+                }
+
+                $count++;
+            }
+        } else {
+            $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
+        }
 
         // Return direct body if status is different than a HIT
         if (isset($results->status) && $results->status != 200) {
