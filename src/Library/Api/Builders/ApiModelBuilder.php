@@ -362,10 +362,10 @@ class ApiModelBuilder extends Builder
     public function getModels($columns = ['*'])
     {
         $results = new ApiCollection();
-        if (count($this->query->ids) > 50) {
+        if (count($this->query->ids) > 100) {
             $ids = collect($this->query->ids);
             $count = 0;
-            foreach ($ids->chunk(50) as $chunk) {
+            foreach ($ids->chunk(100) as $chunk) {
                 $this->query->ids = $chunk->all();
                 if ($count == 0) {
                     $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
