@@ -104,7 +104,7 @@ class AicConnection implements ApiConnectionInterface
 
         if (config('api.logger')) {
             \Log::info($verb . ' ' . $endpoint);
-            \Log::info(print_r($options, true));
+            \Log::debug(print_r($options, true));
             $responseTimerStart = microtime(true);
         }
 
@@ -141,7 +141,7 @@ class AicConnection implements ApiConnectionInterface
         $response = $this->client->request($verb, $endpoint, $options);
         if (config('api.logger')) {
             \Log::info('response time = ' . microtime(true) - $responseTimerStart . ' seconds');
-            \Log::info((array) $response->body);
+            \Log::debug((array) $response->body);
         }
         return $response;
     }
