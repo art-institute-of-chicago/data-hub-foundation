@@ -23,9 +23,11 @@ class ApiCollection extends Collection
 
             return $this->metadata;
         }
+
+        return null;
     }
 
-    public function setMetadata(array|Collection $data): self
+    public function setMetadata(array|Collection|null $data): self
     {
         if (!($data instanceof Collection)) {
             $data = collect($data);
