@@ -36,7 +36,7 @@ trait HasRelationships
      * @param  string  $localKey
      * @return Aic\Hub\Foundation\Library\Api\Builders\Relations\HasMany
      */
-    public function hasMany($related, $localKey = 'id', $limit = -1)
+    public function hasMany($related, $localKey = 'id', $limit = -1, $from = 0)
     {
         $queryInstance = $related::query();
 
@@ -50,7 +50,8 @@ trait HasRelationships
             $queryInstance,
             $this,
             $localKey,
-            $limit
+            $limit,
+            $from
         );
     }
 
@@ -62,9 +63,9 @@ trait HasRelationships
      * @param  string  $localKey
      * @return Aic\Hub\Foundation\Library\Api\Builders\Relations\HasMany
      */
-    protected function newHasMany($query, $parent, $localKey, $limit)
+    protected function newHasMany($query, $parent, $localKey, $limit, $from)
     {
-        return new HasMany($query, $parent, $localKey, $limit);
+        return new HasMany($query, $parent, $localKey, $limit, $from);
     }
 
     /**

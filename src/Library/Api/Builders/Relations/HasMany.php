@@ -2,6 +2,8 @@
 
 namespace Aic\Hub\Foundation\Library\Api\Builders\Relations;
 
+use App\Helpers\CollectionHelpers;
+
 class HasMany
 {
     /**
@@ -30,12 +32,23 @@ class HasMany
      */
     protected $limit;
 
-    public function __construct($query, $parent, $localKey, $limit = -1)
+    /**
+     * Start from a given numeric index key.
+     */
+    protected $from;
+
+    /**
+     * Whether the ids list is empty after slicing, skipping the API query.
+     */
+    protected $empty = false;
+
+    public function __construct($query, $parent, $localKey, $limit = -1, $from = 0)
     {
         $this->query = $query;
         $this->parent = $parent;
         $this->localKey = $localKey;
         $this->limit = $limit;
+        $this->from = $from;
 
         $this->addConstraints();
     }
@@ -49,8 +62,13 @@ class HasMany
         // Sometimes it's just an id and not an array
         $ids = is_array($ids) ? $ids : [$ids];
 
-        if ($this->limit > -1) {
-            $ids = array_slice($ids, 0, $this->limit);
+        if ($this->limit > -1 || $this->from > 0) {
+            $ids = array_slice($ids, $this->from ?: 0, $this->limit ?: -1);
+        }
+
+        if (empty($ids)) {
+            $this->empty = true;
+            return;
         }
 
         $this->query->ids($ids);
@@ -74,6 +92,10 @@ class HasMany
      */
     public function get($columns = [])
     {
+        if ($this->empty) {
+            return CollectionHelpers::collectApi();
+        }
+
         return $this->query->get($columns);
     }
 }
