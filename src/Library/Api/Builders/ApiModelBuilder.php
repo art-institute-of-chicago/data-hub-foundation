@@ -362,26 +362,30 @@ class ApiModelBuilder extends Builder
     public function getModels($columns = ['*'])
     {
         $results = new ApiCollection();
-        $ids = collect($this->query->ids);
-        $count = 0;
-        foreach ($ids->chunk(100) as $chunk) {
-            $this->query->ids = $chunk->all();
-            if ($count == 0) {
-                $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
-            }
-            else {
-                $resultsChunk = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
-                foreach ($resultsChunk as $r) {
-                    $results = $results->push($r);
+        if (count($this->query->ids) > 100) {
+            $ids = collect($this->query->ids);
+            $count = 0;
+            foreach ($ids->chunk(100) as $chunk) {
+                $this->query->ids = $chunk->all();
+                if ($count == 0) {
+                    $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
                 }
+                else {
+                    $resultsChunk = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
+                    foreach ($resultsChunk as $r) {
+                        $results = $results->push($r);
+                    }
+                }
+
+                $count++;
             }
 
-            $count++;
-        }
-
-        // Return direct body if status is different than a HIT
-        if (isset($results->status) && $results->status != 200) {
-            return $results;
+            // Return direct body if status is different than a HIT
+            if (isset($results->status) && $results->status != 200) {
+                return $results;
+            }
+        } else {
+            $results = $this->query->get($columns, $this->getEndpoint($this->resolveCollectionEndpoint()));
         }
 
         $models = $this->model->hydrate($results->all());
