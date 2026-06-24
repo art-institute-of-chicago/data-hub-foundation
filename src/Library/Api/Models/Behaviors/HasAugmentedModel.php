@@ -30,7 +30,7 @@ trait HasAugmentedModel
             return $this->augmentedModel;
         }
 
-        $$this->augmentedModel = isset($this->id) ? $this->augmentedModelClass::where('datahub_id', $this->id)->first() : null;
+        $this->augmentedModel = isset($this->id) ? $this->augmentedModelClass::where('datahub_id', $this->id)->first() : null;
 
         if (!$this->augmentedModel) {
             $this->augmented = false;
