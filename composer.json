@@ -1,6 +1,6 @@
 {
     "name": "aic/data-hub-foundation",
-    "version": "6.4",
+    "version": "6.5",
     "description": "Shared components for our data hub services.",
     "type": "library",
     "repositories": [
@@ -27,7 +27,7 @@
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "composer": "^2.2.0",
         "friendsofphp/php-cs-fixer": "^3.5",
         "guzzlehttp/guzzle": "^7.0",
