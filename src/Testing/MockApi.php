@@ -18,40 +18,13 @@ trait MockApi
      * A mock request handler to simulate returning response.
      * See https://docs.guzzlephp.org/en/stable/testing.html#mock-handler.
      */
-    protected MockHandler $mockApi;
+    public MockHandler $mockApi;
 
     /**
      * An array for storing request/response transactions to the mock API.
      * See https://docs.guzzlephp.org/en/stable/testing.html#history-middleware.
     */
     protected array $transactions;
-
-    private string $searchBody = <<<'JSON'
-[
-    {
-        "preference":null,
-        "pagination":{
-            "total":0,
-            "limit":10,
-            "offset":0,
-            "total_pages":1,
-            "current_page":1
-        },
-        "data":[],
-        "info":{
-            "license_text":"The data in this response may be protected by copyright, and other restrictions, of the Art Institute of Chicago and third parties. You may use this data for noncommercial educational and personal use and for \"fair use\" as authorized under law, provided that you also retain all copyright and other proprietary notices contained on the materials and cite the author and source of the materials.",
-            "license_links":[
-                "https:\/\/www.artic.edu\/terms"
-            ],
-            "version":"1.6"
-        },
-        "config":{
-            "iiif_url":"https:\/\/www.artic.edu\/iiif\/2",
-            "website_url":"http:\/\/www.artic.edu"
-        }
-    }
-]
-JSON;
 
     /**
      * Set up Guzzle's builtin mock request handler and swap it in for the app's
@@ -71,19 +44,50 @@ JSON;
     /**
      * Generate a mock API response based on the given model.
      */
-    public function mockApiModelReponse(ApiModel $model, int $statusCode = 200, array $headers = []): Response
+    public function mockApiModelReponse(?ApiModel $model = null, int $statusCode = 200, array $headers = []): Response
     {
-        return new Response($statusCode, $headers, json_encode(['data' => $model->toArray()]));
+        if ($statusCode < 200 || $statusCode > 299) {
+            return new Response (
+                $statusCode,
+                $headers,
+                json_encode(['status' => $statusCode, 'error' => 'Mock error response']),
+            );
+        }
+        return new Response($statusCode, $headers, json_encode(['data' => $model ? $model->toArray() : $model]));
     }
 
     /**
-     * Generate a mock API search response.
-     *
-     * TODO: Allow for passing in models to return as the search results.
+     * Generate a mock API search response based on the given models.
      */
-    public function mockApiSearchResponse(int $statusCode = 200, array $headers = []): Response
+    public function mockApiSearchResponse(array $models = [], int $statusCode = 200, array $headers = []): Response
     {
-        return new Response($statusCode, $headers, $this->searchBody);
+        if ($statusCode < 200 || $statusCode > 299) {
+            return new Response (
+                $statusCode,
+                $headers,
+                json_encode(['status' => $statusCode, 'error' => 'Mock error response']),
+            );
+        }
+        return new Response($statusCode, $headers, json_encode([
+            'preference' => null,
+            'pagination' => [
+                'total' => count($models),
+                'limit' => 10,
+                'offset' => 0,
+                'total_pages' => 1,
+                'current_page' => 1,
+            ],
+            'data' => array_map(fn ($model) => $model->toArray(), $models),
+            'info' => [
+                'license_text' => "The data in this response may be protected by copyright, and other restrictions, of the Art Institute of Chicago and third parties. You may use this data for noncommercial educational and personal use and for \"fair use\" as authorized under law, provided that you also retain all copyright and other proprietary notices contained on the materials and cite the author and source of the materials.",
+                'license_links' => ['https:\/\/www.artic.edu\/terms'],
+                'version' => '1.6',
+            ],
+            'config' => [
+                'iiif_url' => 'https:\/\/www.artic.edu\/iiif\/2',
+                'website_url' => 'http:\/\/www.artic.edu',
+            ],
+        ]));
     }
 
     /**
