@@ -309,11 +309,12 @@ abstract class ApiFactory
     }
 
     /**
-     * Get a raw attributes array for the model.
+     * Get a raw attributes array for the model and add normalized `api_model`.
      */
     protected function getExpandedAttributes(?ApiModel $parent): mixed
     {
-        return $this->expandAttributes($this->getRawAttributes($parent));
+        $normalizedType = str(class_basename($this->model))->plural()->snake()->toString();
+        return $this->expandAttributes(['api_model' => $normalizedType] + $this->getRawAttributes($parent));
     }
 
     /**
