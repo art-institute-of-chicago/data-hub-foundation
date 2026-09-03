@@ -1,6 +1,5 @@
 {
     "name": "aic/data-hub-foundation",
-    "version": "6.6",
     "description": "Shared components for our data hub services.",
     "type": "library",
     "repositories": [
