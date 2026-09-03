@@ -141,7 +141,7 @@ abstract class AbstractController extends BaseController
      * Return a single resource. Not meant to be called directly in routes.
      * `$callback` should return an Eloquent Model.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function select(Request $request, Closure $callback)
     {
@@ -168,7 +168,7 @@ abstract class AbstractController extends BaseController
      * Return a list of resources. Not meant to be called directly in routes.
      * `$callback` should return an Eloquent Collection.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function collect(Request $request, Closure $callback)
     {
