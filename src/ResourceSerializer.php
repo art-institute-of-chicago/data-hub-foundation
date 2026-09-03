@@ -15,11 +15,11 @@ class ResourceSerializer extends DataArraySerializer
     */
     public function collection(?string $resourceKey, array $data): array
     {
-        if ($resourceKey === false) {
+        if ($resourceKey === null || $resourceKey === '') {
             return $data;
         }
 
-        return [$resourceKey ?: 'data' => $data];
+        return [$resourceKey];
     }
 
     /**
@@ -31,10 +31,10 @@ class ResourceSerializer extends DataArraySerializer
      */
     public function item(?string $resourceKey, array $data): array
     {
-        if ($resourceKey === false) {
+        if ($resourceKey === null || $resourceKey === '') {
             return $data;
         }
 
-        return [$resourceKey ?: 'data' => $data];
+        return [$resourceKey];
     }
 }
