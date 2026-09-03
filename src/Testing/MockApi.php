@@ -18,7 +18,7 @@ trait MockApi
      * A mock request handler to simulate returning response.
      * See https://docs.guzzlephp.org/en/stable/testing.html#mock-handler.
      */
-    public MockHandler $mockApi;
+    protected MockHandler $mockApi;
 
     /**
      * An array for storing request/response transactions to the mock API.
