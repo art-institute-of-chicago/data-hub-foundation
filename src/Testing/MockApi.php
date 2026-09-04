@@ -46,12 +46,8 @@ trait MockApi
      */
     public function mockApiModelReponse(?ApiModel $model = null, int $statusCode = 200, array $headers = []): Response
     {
-        if ($statusCode < 200 || $statusCode > 299) {
-            return new Response (
-                $statusCode,
-                $headers,
-                json_encode(['status' => $statusCode, 'error' => 'Mock error response']),
-            );
+        if ($errorResponse = $this->isError($statusCode, $headers)) {
+            return $errorResponse;
         }
         return new Response($statusCode, $headers, json_encode(['data' => $model ? $model->toArray() : $model]));
     }
@@ -61,12 +57,8 @@ trait MockApi
      */
     public function mockApiSearchResponse(array $models = [], int $statusCode = 200, array $headers = []): Response
     {
-        if ($statusCode < 200 || $statusCode > 299) {
-            return new Response (
-                $statusCode,
-                $headers,
-                json_encode(['status' => $statusCode, 'error' => 'Mock error response']),
-            );
+        if ($errorResponse = $this->isError($statusCode, $headers)) {
+            return $errorResponse;
         }
         return new Response($statusCode, $headers, json_encode([
             'preference' => null,
@@ -87,6 +79,21 @@ trait MockApi
                 'iiif_url' => 'https:\/\/www.artic.edu\/iiif\/2',
                 'website_url' => 'http:\/\/www.artic.edu',
             ],
+        ]));
+    }
+
+    /**
+     * Generate a mock API AI response based on the given models.
+     */
+    public function mockApiAiResponse(array $models = [], int $statusCode = 200, array $headers = []): Response
+    {
+        if ($errorResponse = $this->isError($statusCode, $headers)) {
+            return $errorResponse;
+        }
+        return new Response($statusCode, $headers, json_encode([
+            'data' => [
+                'items' => array_map(fn ($model) => $model->id, $models),
+            ]
         ]));
     }
 
@@ -128,5 +135,20 @@ trait MockApi
             });
         $message = $message ?: "The API did not receive the request {$method} {$uri}";
         $this->assertTrue($transactionsContainRequest, $message);
+    }
+
+    /**
+     * If the status code is an error, return an error response.
+     */
+    private function isError(int $statusCode, array $headers = []): Response|bool
+    {
+        if ($statusCode > 399) {
+            return new Response (
+                $statusCode,
+                $headers,
+                json_encode(['status' => $statusCode, 'error' => 'Mock error response']),
+            );
+        }
+        return false;
     }
 }
