@@ -55,20 +55,27 @@ trait MockApi
     /**
      * Generate a mock API search response based on the given models.
      */
-    public function mockApiSearchResponse(array $models = [], int $statusCode = 200, array $headers = []): Response
-    {
+    public function mockApiSearchResponse(
+        array $models = [],
+        int $statusCode = 200,
+        array $headers = [],
+        array $pagination = [],
+    ): Response {
         if ($errorResponse = $this->isError($statusCode, $headers)) {
             return $errorResponse;
         }
         return new Response($statusCode, $headers, json_encode([
             'preference' => null,
-            'pagination' => [
-                'total' => count($models),
-                'limit' => 10,
-                'offset' => 0,
-                'total_pages' => 1,
-                'current_page' => 1,
-            ],
+            'pagination' => array_merge(
+                [
+                    'total' => count($models),
+                    'limit' => 10,
+                    'offset' => 0,
+                    'total_pages' => 1,
+                    'current_page' => 1,
+                ],
+                $pagination,
+            ),
             'data' => array_map(fn ($model) => $model->toArray(), $models),
             'info' => [
                 'license_text' => "The data in this response may be protected by copyright, and other restrictions, of the Art Institute of Chicago and third parties. You may use this data for noncommercial educational and personal use and for \"fair use\" as authorized under law, provided that you also retain all copyright and other proprietary notices contained on the materials and cite the author and source of the materials.",
