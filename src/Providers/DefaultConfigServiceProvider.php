@@ -2,6 +2,7 @@
 
 namespace Aic\Hub\Foundation\Providers;
 
+use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Support\ServiceProvider;
 
 class DefaultConfigServiceProvider extends ServiceProvider
@@ -54,6 +55,11 @@ class DefaultConfigServiceProvider extends ServiceProvider
      * `config/app.php` file in your app, with a few required keys. See the
      * `boot` method here for more info.
      *
+     * Since Laravel 11, the framework loads its own default config files
+     * before service providers run, so `mergeConfigFrom` would let those
+     * framework defaults win over ours. Instead, we apply precedence of
+     * app config > foundation defaults > framework defaults, per first-level key.
+     *
      * @link https://laravel.com/docs/5.5/packages#resources
      * @link https://laracasts.com/discuss/channels/general-discussion/how-does-mergeconfigfrom-work
      *
@@ -61,10 +67,18 @@ class DefaultConfigServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached()) {
+            return;
+        }
+
+        $config = $this->app->make('config');
         $files = glob($this->defaultConfigPath . '/*.php');
 
         foreach ($files as $file) {
-            $this->mergeConfigFrom($file, basename($file, '.php'));
+            $key = basename($file, '.php');
+            $app = file_exists($path = config_path($key . '.php')) ? require $path : [];
+
+            $config->set($key, array_merge($config->get($key, []), require $file, $app));
         }
 
         // Uncomment this for debugging
