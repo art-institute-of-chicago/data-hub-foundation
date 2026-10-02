@@ -870,7 +870,7 @@ abstract class BaseApiModel implements ArrayAccess, Arrayable, Jsonable, JsonSer
      *
      * @return \Jenssegers\Model\Model
      */
-    public function replicate(array $except = null)
+    public function replicate(?array $except = null)
     {
         $except = $except ?: [];
 
