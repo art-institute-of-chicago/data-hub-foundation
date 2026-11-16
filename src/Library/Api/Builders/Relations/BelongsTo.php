@@ -24,8 +24,7 @@ class BelongsTo extends BaseBelongsTo
     public function getResults()
     {
         if (in_array(HasApiModel::class, class_uses_recursive($this->child::class))) {
-            $this->child->refreshApi();
-            $id = $this->child->getApiModelFilled()->{$this->foreignKey};
+            $id = $this->child->getApiModelFilledCached()->{$this->foreignKey};
         } else {
             $id = $this->child->getAttribute($this->foreignKey);
         }
