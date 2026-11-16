@@ -11,5 +11,6 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     protected $providers = [
         CommandServiceProvider::class,
+        ImageServiceProvider::class,
     ];
 }
