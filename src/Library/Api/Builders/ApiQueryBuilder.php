@@ -7,7 +7,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Aic\Hub\Foundation\Library\Api\Builders\Grammar\MsearchGrammar;
 use Aic\Hub\Foundation\Library\Api\Builders\Grammar\SearchGrammar;
-use App\Helpers\CollectionHelpers;
+use Aic\Hub\Foundation\Library\Helpers\CollectionHelpers;
 
 class ApiQueryBuilder
 {

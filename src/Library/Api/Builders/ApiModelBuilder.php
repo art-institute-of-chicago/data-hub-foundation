@@ -2,7 +2,7 @@
 
 namespace Aic\Hub\Foundation\Library\Api\Builders;
 
-use App\Helpers\CollectionHelpers;
+use Aic\Hub\Foundation\Library\Helpers\CollectionHelpers;
 use Aic\Hub\Foundation\Library\Api\Models\ApiCollection;
 use Aic\Hub\Foundation\Library\Api\Models\BaseApiModel;
 use Illuminate\Contracts\Support\Arrayable;

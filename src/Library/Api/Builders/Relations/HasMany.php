@@ -2,7 +2,7 @@
 
 namespace Aic\Hub\Foundation\Library\Api\Builders\Relations;
 
-use App\Helpers\CollectionHelpers;
+use Aic\Hub\Foundation\Library\Helpers\CollectionHelpers;
 
 class HasMany
 {
