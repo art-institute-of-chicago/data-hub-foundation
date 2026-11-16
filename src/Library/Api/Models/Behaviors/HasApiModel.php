@@ -104,11 +104,6 @@ trait HasApiModel
         $this->apiFilled = true;
     }
 
-    public function hasAttribute($attr)
-    {
-        return array_key_exists($attr, $this->attributes);
-    }
-
     public function getApiField($field)
     {
         return $this->getApiFields[$field];
